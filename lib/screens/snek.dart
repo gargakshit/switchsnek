@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:switchsnek/utils/swipe.dart';
 
 enum Direction { UP, DOWN, RIGHT, LEFT }
 
@@ -33,7 +34,7 @@ class _SnekScreenState extends State<SnekScreen> {
   bool gameStarted = false;
   String gameOverReason = '';
 
-  Direction direction = Direction.RIGHT;
+  Direction direction = Direction.DOWN;
 
   final gridFocus = FocusNode();
 
@@ -230,38 +231,55 @@ class _SnekScreenState extends State<SnekScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RawKeyboardListener(
-        focusNode: gridFocus,
-        onKey: processKeyboardEvent,
-        child: GridView.count(
-          crossAxisCount: crossAxisCount,
-          key: gridKey,
-          childAspectRatio: switchWidth / switchHeight,
-          physics: const NeverScrollableScrollPhysics(),
-          children: List.generate(
-            numSwitches,
-            (i) {
-              final index = snek.indexOf(i);
-              final isFwood = fwood == i;
+      body: SwipeDetector(
+        swipeConfiguration: SwipeConfiguration(),
+        onSwipeDown: () {
+          setDirection(Direction.DOWN);
+        },
+        onSwipeUp: () {
+          setDirection(Direction.UP);
+        },
+        onSwipeLeft: () {
+          setDirection(Direction.LEFT);
+        },
+        onSwipeRight: () {
+          setDirection(Direction.RIGHT);
+        },
+        child: RawKeyboardListener(
+          focusNode: gridFocus,
+          onKey: processKeyboardEvent,
+          child: IgnorePointer(
+            child: GridView.count(
+              crossAxisCount: crossAxisCount,
+              key: gridKey,
+              childAspectRatio: switchWidth / switchHeight,
+              physics: const NeverScrollableScrollPhysics(),
+              children: List.generate(
+                numSwitches,
+                (i) {
+                  final index = snek.indexOf(i);
+                  final isFwood = fwood == i;
 
-              final isHead = index == snek.length - 1;
+                  final isHead = index == snek.length - 1;
 
-              return SizedBox(
-                width: switchWidth,
-                height: switchHeight,
-                child: Theme(
-                  data: isFwood || isHead
-                      ? ThemeData(
-                          primarySwatch: isHead ? Colors.blue : Colors.red,
-                        )
-                      : Theme.of(context),
-                  child: Switch(
-                    onChanged: (_) {},
-                    value: index != -1 || isFwood,
-                  ),
-                ),
-              );
-            },
+                  return SizedBox(
+                    width: switchWidth,
+                    height: switchHeight,
+                    child: Theme(
+                      data: isFwood || isHead
+                          ? ThemeData(
+                              primarySwatch: isHead ? Colors.blue : Colors.red,
+                            )
+                          : Theme.of(context),
+                      child: Switch(
+                        onChanged: (_) {},
+                        value: index != -1 || isFwood,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),
