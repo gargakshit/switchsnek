@@ -307,7 +307,9 @@ class _SnekScreenState extends State<SnekScreen> {
                       ),
                     ],
                   )
-                : Text('Score: $score'))
+                : Center(
+                    child: Text('Score: $score'),
+                  ))
             : ElevatedButton(
                 onPressed: () {
                   startGame();
