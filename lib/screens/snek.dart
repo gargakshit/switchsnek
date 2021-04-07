@@ -244,13 +244,15 @@ class _SnekScreenState extends State<SnekScreen> {
               final index = snek.indexOf(i);
               final isFwood = fwood == i;
 
+              final isHead = index == snek.length - 1;
+
               return SizedBox(
                 width: switchWidth,
                 height: switchHeight,
                 child: Theme(
-                  data: isFwood || index == snek.length - 1
+                  data: isFwood || isHead
                       ? ThemeData(
-                          primarySwatch: Colors.red,
+                          primarySwatch: isHead ? Colors.blue : Colors.red,
                         )
                       : Theme.of(context),
                   child: Switch(

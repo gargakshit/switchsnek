@@ -7,7 +7,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool onScreenControls = true;
+  bool onScreenControls = false;
 
   // ignore: avoid_positional_boolean_parameters
   void toggleOnScreenControls(bool val) {
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: toSnek,
             child: const Text('START'),
           ),
           Row(
