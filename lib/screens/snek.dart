@@ -44,7 +44,15 @@ class _SnekScreenState extends State<SnekScreen> {
     });
   }
 
-  int generateFwoodLocation(int num) => Random.secure().nextInt(num);
+  int generateFwoodLocation(int num, List<int> snek) {
+    final fwood = Random.secure().nextInt(num);
+
+    // can't have fwood on the snek
+    if (snek.contains(fwood)) {
+      return generateFwoodLocation(num, snek);
+    }
+    return fwood;
+  }
 
   void calculateSize() {
     final gridSize = gridKey.currentContext!.size!;
@@ -60,10 +68,10 @@ class _SnekScreenState extends State<SnekScreen> {
       crossAxisCount = crossAxis;
       mainAxisCount = mainAxis;
 
-      fwood = generateFwoodLocation(numSwitches);
-
       // start from 2nd row, 2nd col
       snek = List.generate(4, (i) => crossAxis + 2 + i);
+
+      fwood = generateFwoodLocation(numSwitches, snek);
     });
   }
 
@@ -197,7 +205,7 @@ class _SnekScreenState extends State<SnekScreen> {
       }
 
       if (last == fwood) {
-        fwood = generateFwoodLocation(numSwitches);
+        fwood = generateFwoodLocation(numSwitches, snek);
         score++;
       } else {
         if (!gameOver) {
