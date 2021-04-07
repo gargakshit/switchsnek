@@ -27,10 +27,13 @@ class _SnekScreenState extends State<SnekScreen> {
   Timer? timer;
   bool gameOver = false;
   bool gameStarted = false;
+  String gameOverReason = '';
 
   Direction direction = Direction.RIGHT;
 
   final gridFocus = FocusNode();
+
+  int score = 0;
 
   @override
   void initState() {
@@ -77,11 +80,31 @@ class _SnekScreenState extends State<SnekScreen> {
 
           if (gameOver) {
             timer.cancel();
-            // show the end screen
+            showGameOver();
           }
         },
       );
     });
+  }
+
+  void showGameOver() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Game Over'),
+        content: Text(gameOverReason),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: const Text('BACK'),
+          ),
+        ],
+      ),
+    );
   }
 
   final upKey = 4295426130;
@@ -123,46 +146,59 @@ class _SnekScreenState extends State<SnekScreen> {
     setState(() {
       final last = snek.last;
 
-      switch (direction) {
-        case Direction.RIGHT:
-          if ((last + 1) % crossAxisCount == 0) {
-            gameOver = true;
-          } else {
-            snek.add(last + 1);
-          }
+      final snekCopy = [...snek];
+      snekCopy.removeLast();
 
-          break;
+      if (snekCopy.contains(last)) {
+        gameOver = true;
+        gameOverReason = 'Did you try to eat yourself?';
+      } else {
+        switch (direction) {
+          case Direction.RIGHT:
+            if ((last + 1) % crossAxisCount == 0) {
+              gameOver = true;
+              gameOverReason = 'You hit a wall';
+            } else {
+              snek.add(last + 1);
+            }
 
-        case Direction.DOWN:
-          if (last > numSwitches - crossAxisCount) {
-            gameOver = true;
-          } else {
-            snek.add(last + crossAxisCount);
-          }
+            break;
 
-          break;
+          case Direction.DOWN:
+            if (last > numSwitches - crossAxisCount) {
+              gameOver = true;
+              gameOverReason = 'You hit a wall';
+            } else {
+              snek.add(last + crossAxisCount);
+            }
 
-        case Direction.LEFT:
-          if (last % crossAxisCount == 0) {
-            gameOver = true;
-          } else {
-            snek.add(last - 1);
-          }
+            break;
 
-          break;
+          case Direction.LEFT:
+            if (last % crossAxisCount == 0) {
+              gameOver = true;
+              gameOverReason = 'You hit a wall';
+            } else {
+              snek.add(last - 1);
+            }
 
-        case Direction.UP:
-          if (last < crossAxisCount) {
-            gameOver = true;
-          } else {
-            snek.add(last - crossAxisCount);
-          }
+            break;
 
-          break;
+          case Direction.UP:
+            if (last < crossAxisCount) {
+              gameOver = true;
+              gameOverReason = 'You hit a wall';
+            } else {
+              snek.add(last - crossAxisCount);
+            }
+
+            break;
+        }
       }
 
       if (last == fwood) {
         fwood = generateFwoodLocation(numSwitches);
+        score++;
       } else {
         if (!gameOver) {
           snek.removeAt(0);
@@ -210,7 +246,12 @@ class _SnekScreenState extends State<SnekScreen> {
       bottomNavigationBar: SizedBox(
         height: 40,
         child: gameStarted
-            ? Container()
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Score: $score'),
+                ],
+              )
             : ElevatedButton(
                 onPressed: () {
                   startGame();
