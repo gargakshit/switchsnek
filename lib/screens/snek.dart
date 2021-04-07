@@ -221,21 +221,21 @@ class _SnekScreenState extends State<SnekScreen> {
           children: List.generate(
             numSwitches,
             (i) {
-              final has = snek.contains(i);
+              final index = snek.indexOf(i);
               final isFwood = fwood == i;
 
               return SizedBox(
                 width: switchWidth,
                 height: switchHeight,
                 child: Theme(
-                  data: isFwood
+                  data: isFwood || index == snek.length - 1
                       ? ThemeData(
                           primarySwatch: Colors.red,
                         )
                       : Theme.of(context),
                   child: Switch(
                     onChanged: (_) {},
-                    value: has || isFwood,
+                    value: index != -1 || isFwood,
                   ),
                 ),
               );
