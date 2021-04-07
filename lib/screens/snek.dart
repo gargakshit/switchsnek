@@ -41,6 +41,8 @@ class _SnekScreenState extends State<SnekScreen> {
     });
   }
 
+  int generateFwoodLocation(int num) => Random.secure().nextInt(num);
+
   void calculateSize() {
     final gridSize = gridKey.currentContext!.size!;
 
@@ -55,7 +57,7 @@ class _SnekScreenState extends State<SnekScreen> {
       crossAxisCount = crossAxis;
       mainAxisCount = mainAxis;
 
-      fwood = Random.secure().nextInt(numSwitches);
+      fwood = generateFwoodLocation(numSwitches);
 
       // start from 2nd row, 2nd col
       snek = List.generate(4, (i) => crossAxis + 2 + i);
@@ -127,7 +129,6 @@ class _SnekScreenState extends State<SnekScreen> {
             gameOver = true;
           } else {
             snek.add(last + 1);
-            snek.removeAt(0);
           }
 
           break;
@@ -137,7 +138,6 @@ class _SnekScreenState extends State<SnekScreen> {
             gameOver = true;
           } else {
             snek.add(last + crossAxisCount);
-            snek.removeAt(0);
           }
 
           break;
@@ -147,7 +147,6 @@ class _SnekScreenState extends State<SnekScreen> {
             gameOver = true;
           } else {
             snek.add(last - 1);
-            snek.removeAt(0);
           }
 
           break;
@@ -157,13 +156,17 @@ class _SnekScreenState extends State<SnekScreen> {
             gameOver = true;
           } else {
             snek.add(last - crossAxisCount);
-            snek.removeAt(0);
           }
 
           break;
+      }
 
-        default:
-          break;
+      if (last == fwood) {
+        fwood = generateFwoodLocation(numSwitches);
+      } else {
+        if (!gameOver) {
+          snek.removeAt(0);
+        }
       }
     });
   }
