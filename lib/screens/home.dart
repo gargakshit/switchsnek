@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void toSnek() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => SnekScreen(),
+        builder: (_) => SnekScreen(osc: onScreenControls),
       ),
     );
   }
@@ -39,23 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              toSnek();
-            },
+            onPressed: () {},
             child: const Text('START'),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Switch(
-                  onChanged: toggleOnScreenControls,
-                  value: onScreenControls,
-                ),
-                const Text('Show on-screen controls'),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Switch(
+                onChanged: toggleOnScreenControls,
+                value: onScreenControls,
+              ),
+              const Text('Show on-screen controls'),
+            ],
           ),
         ],
       ),

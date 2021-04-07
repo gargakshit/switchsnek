@@ -7,6 +7,10 @@ import 'package:flutter/services.dart';
 enum Direction { UP, DOWN, RIGHT, LEFT }
 
 class SnekScreen extends StatefulWidget {
+  final bool osc;
+
+  const SnekScreen({required this.osc});
+
   @override
   _SnekScreenState createState() => _SnekScreenState();
 }
@@ -32,6 +36,11 @@ class _SnekScreenState extends State<SnekScreen> {
   Direction direction = Direction.RIGHT;
 
   final gridFocus = FocusNode();
+
+  final upFocus = FocusNode();
+  final downFocus = FocusNode();
+  final rightFocus = FocusNode();
+  final leftFocus = FocusNode();
 
   int score = 0;
 
@@ -77,6 +86,11 @@ class _SnekScreenState extends State<SnekScreen> {
 
   void startGame() {
     FocusScope.of(context).requestFocus(gridFocus);
+
+    upFocus.unfocus();
+    downFocus.unfocus();
+    leftFocus.unfocus();
+    rightFocus.unfocus();
 
     setState(() {
       gameStarted = true;
@@ -132,22 +146,20 @@ class _SnekScreenState extends State<SnekScreen> {
     final keyId = event.logicalKey.keyId;
 
     if (keyId == upKey && direction != Direction.DOWN) {
-      setState(() {
-        direction = Direction.UP;
-      });
+      setDirection(Direction.UP);
     } else if (keyId == downKey && direction != Direction.UP) {
-      setState(() {
-        direction = Direction.DOWN;
-      });
+      setDirection(Direction.DOWN);
     } else if (keyId == rightKey && direction != Direction.LEFT) {
-      setState(() {
-        direction = Direction.RIGHT;
-      });
+      setDirection(Direction.RIGHT);
     } else if (keyId == leftKey && direction != Direction.RIGHT) {
-      setState(() {
-        direction = Direction.LEFT;
-      });
+      setDirection(Direction.LEFT);
     }
+  }
+
+  void setDirection(Direction dir) {
+    setState(() {
+      direction = dir;
+    });
   }
 
   void updateSnek() {
@@ -254,12 +266,46 @@ class _SnekScreenState extends State<SnekScreen> {
       bottomNavigationBar: SizedBox(
         height: 40,
         child: gameStarted
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Score: $score'),
-                ],
-              )
+            ? (widget.osc
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Score: $score'),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          setDirection(Direction.LEFT);
+                        },
+                        focusNode: leftFocus,
+                        child: const Icon(Icons.chevron_left_outlined),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          setDirection(Direction.UP);
+                        },
+                        focusNode: upFocus,
+                        child: const Icon(Icons.keyboard_arrow_up_outlined),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          setDirection(Direction.DOWN);
+                        },
+                        focusNode: downFocus,
+                        child: const Icon(Icons.keyboard_arrow_down_outlined),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          setDirection(Direction.RIGHT);
+                        },
+                        focusNode: rightFocus,
+                        child: const Icon(Icons.chevron_right_outlined),
+                      ),
+                    ],
+                  )
+                : Text('Score: $score'))
             : ElevatedButton(
                 onPressed: () {
                   startGame();
@@ -273,6 +319,12 @@ class _SnekScreenState extends State<SnekScreen> {
   @override
   void dispose() {
     gridFocus.dispose();
+
+    upFocus.dispose();
+    downFocus.dispose();
+    leftFocus.dispose();
+    rightFocus.dispose();
+
     timer?.cancel();
 
     super.dispose();
