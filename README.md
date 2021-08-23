@@ -2,7 +2,6 @@
 
 A snake game made using switches in flutter.
 This was made purely as a joke.
-You can play it at https://akshit.tech/switchsnek/ or built it yourself.
 
 Twitter post: https://twitter.com/thepotatokitty/status/1379912090169663489
 
